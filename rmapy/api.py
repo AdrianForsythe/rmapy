@@ -35,8 +35,8 @@ class Client(object):
         "usertoken": ""
     }
 
-    def __init__(self):
-        config = load()
+    def __init__(self, config_dict: dict = None):
+        config = config_dict or load()
         if "devicetoken" in config:
             self.token_set["devicetoken"] = config["devicetoken"]
         if "usertoken" in config:

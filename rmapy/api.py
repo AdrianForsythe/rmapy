@@ -91,7 +91,7 @@ class Client(object):
                              stream=stream)
         return r
 
-    def register_device(self, code: str, save_to_file: bool = True:
+    def register_device(self, code: str, save_to_file: bool = True):
         """Registers a device on the Remarkable Cloud.
 
         This uses a unique code the user gets from

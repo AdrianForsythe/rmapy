@@ -178,7 +178,7 @@ class ZipDocument(object):
     rm: List[RmPage] = []
     ID = None
 
-    def __init__(self, _id=None, doc=None, file=None):
+    def __init__(self, _id=None, doc=None, file=None, filename: str = "RemarkableDocument.pdf"):
         """Create a new instance of a ZipDocument
 
         Args:
@@ -190,24 +190,37 @@ class ZipDocument(object):
             _id = str(uuid4())
         self.ID = _id
         if doc:
-            ext = doc[-4:]
-            if ext.endswith("pdf"):
+            if isinstance(doc, str):
+                ext = doc[-4:]
+                if ext.endswith("pdf"):
+                    self.content["fileType"] = "pdf"
+                    self.pdf = BytesIO()
+                    with open(doc, 'rb') as fb:
+                        self.pdf.write(fb.read())
+                    self.pdf.seek(0)
+                elif ext.endswith("epub"):
+                    self.content["fileType"] = "epub"
+                    self.epub = BytesIO()
+                    with open(doc, 'rb') as fb:
+                        self.epub.write(fb.read())
+                    self.epub.seek(0)
+                elif ext.endswith("rm"):
+                    self.content["fileType"] = "notebook"
+                    with open(doc, 'rb') as fb:
+                        self.rm.append(RmPage(page=BytesIO(fb.read())))
+                name = os.path.splitext(os.path.basename(doc))[0]
+            elif isinstance(doc, io.BytesIO):
+                # TODO: Only supports PDF right now
                 self.content["fileType"] = "pdf"
                 self.pdf = BytesIO()
-                with open(doc, 'rb') as fb:
-                    self.pdf.write(fb.read())
+                self.pdf.write(doc.read())
                 self.pdf.seek(0)
-            if ext.endswith("epub"):
-                self.content["fileType"] = "epub"
-                self.epub = BytesIO()
-                with open(doc, 'rb') as fb:
-                    self.epub.write(fb.read())
-                self.epub.seek(0)
-            elif ext.endswith("rm"):
-                self.content["fileType"] = "notebook"
-                with open(doc, 'rb') as fb:
-                    self.rm.append(RmPage(page=BytesIO(fb.read())))
-            name = os.path.splitext(os.path.basename(doc))[0]
+                name = filename
+            else:
+                raise ValueError(
+                    "Unsupported type for argument doc: "
+                    "Must be either filename (str) or io.BytesIO."
+                )
             self.metadata["VissibleName"] = name
 
         if file:

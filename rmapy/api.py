@@ -82,7 +82,7 @@ class Client(object):
             _headers["Authorization"] = f"Bearer {token}"
         for k in headers.keys():
             _headers[k] = headers[k]
-        log.debug(url, _headers)
+        # log.debug(url, _headers)
         r = requests.request(method, url,
                              json=body,
                              data=data,
@@ -91,7 +91,7 @@ class Client(object):
                              stream=stream)
         return r
 
-    def register_device(self, code: str):
+    def register_device(self, code: str, save_to_file: bool = True:
         """Registers a device on the Remarkable Cloud.
 
         This uses a unique code the user gets from
@@ -118,12 +118,15 @@ class Client(object):
         response = self.request("POST", DEVICE_TOKEN_URL, body=body)
         if response.ok:
             self.token_set["devicetoken"] = response.text
-            dump(self.token_set)
-            return True
+            if save_to_file:
+                dump(self.token_set)
+                return True
+            else:
+                return self.token_set
         else:
             raise AuthError("Can't register device")
 
-    def renew_token(self):
+    def renew_token(self, save_to_file: bool = True):
         """Fetches a new user_token.
 
         This is the second step of the authentication of the Remarkable Cloud.
@@ -145,8 +148,11 @@ class Client(object):
             })
         if response.ok:
             self.token_set["usertoken"] = response.text
-            dump(self.token_set)
-            return True
+            if save_to_file:
+                dump(self.token_set)
+                return True
+            else:
+                return self.token_set
         else:
             raise AuthError("Can't renew token: {e}".format(
                 e=response.status_code))

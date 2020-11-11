@@ -7,6 +7,7 @@ This fork includes the following modifications:
 * **Some bug fixes,** including better auth/token renewal and function-name bugs
 I'd recommend you use this repo instead of the original, since it is fully backwards-compatible. But you do you!! I use this for [ReMailable](https://github.com/j6k4m8/remailable), so I tend to keep it updated.
 
+The original rmapy fork's documentation is available [here](http://rmapy.readthedocs.io/). Note that it may be a bit out of date with the capabilities implemented in this repo.
 
 This is an (unofficial) Remarkable Cloud API Client written in Python.
 

@@ -51,7 +51,6 @@ class Meta(object):
     Returns
       a dict of the current object.
     """
-
     return {
       "ID": self.ID,
       "Version": self.Version,
